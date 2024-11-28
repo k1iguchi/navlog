@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VFR Navlog</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <script src="columns.js"></script>
+    <script src="navlog.js"></script>
+    <script src="morse.js"></script>
+    <script src="ui.js"></script>
+    <script src="yamlUtils.js"></script>
+    <script>
+        $(document).ready(function() {
+            createTableHeader(); // ヘッダー行の生成
+            addDepartureRow(); // 出発地の行を追加
+            createTotalRow(); // 合計行の生成
+            addRow(); // 初めから1行表示する
+
+            // フォームの変更をYAMLに反映する
+            $('#navlog-form').on('input', function() {
+                updateYAML();
+            });
+
+            // textareaのYAMLが変更された場合に各項目の入力欄に反映する
+            $('#yaml-output').on('input', function() {
+                loadFormFromYAML();
+            });
+
+            // 初期ロード時にYAMLを生成
+            updateYAML();
+        });
+    </script>
+</head>
+<body>
+    <h1>VFR ナビゲーションログ</h1>
+    <form id="navlog-form">
+        <table id="navlog-table"></table>
+    </form>
+    <div id="results"></div>
+    <textarea id="yaml-output" rows="10" cols="50" class="no-print"></textarea> <!-- YAML出力用のtextarea -->
+</body>
+</html>
