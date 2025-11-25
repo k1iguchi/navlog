@@ -1,9 +1,10 @@
 function updateYAML() {
-    const formData = { departure: {} };
+    const title = $('#navlog-title').val() || '';
+    const formData = { title, departure: {} };
     const rowDataArray = [];
     $('#navlog-table tr').each(function(index, row) {
         if (index === 1) { // 出発地行
-            $(row).find('input, select').each(function() {
+            $(row).find('input, select, textarea').each(function() {
                 const $input = $(this);
                 const name = $input.attr('name');
                 const value = $input.val();
@@ -13,7 +14,7 @@ function updateYAML() {
             });
         } else if (index > 1 && !$(row).attr('id')) { // スキップする行: ヘッダーおよび合計行
             const rowData = {};
-            $(row).find('input, select').each(function() {
+            $(row).find('input, select, textarea').each(function() {
                 const $input = $(this);
                 const name = $input.attr('name');
                 const value = $input.val();
@@ -35,7 +36,10 @@ function updateYAML() {
 function loadFormFromYAML() {
     const yamlText = $('#yaml-output').val();
     try {
-        const formData = jsyaml.load(yamlText);
+        const formData = jsyaml.load(yamlText) || {};
+
+        const title = formData.title || 'VFR ナビゲーションログ';
+        $('#navlog-title').val(title);
 
         // フォームをクリア
         $('#navlog-table tr').remove();
@@ -44,13 +48,15 @@ function loadFormFromYAML() {
         addDepartureRow(); // 出発地の行を追加
         createTotalRow(); // 合計行の生成
 
-        Object.keys(formData.departure).forEach(name => {
+        const departure = formData.departure || {};
+        Object.keys(departure).forEach(name => {
             const $input = $(`#navlog-table tr:eq(1) [name="${name}"]`);
-            $input.val(formData.departure[name]);
+            $input.val(departure[name]);
         });
 
         // 行を追加しつつ、入力値を設定
-        formData.checkpoints.forEach((rowData, rowIndex) => {
+        const checkpoints = Array.isArray(formData.checkpoints) ? formData.checkpoints : [];
+        checkpoints.forEach((rowData, rowIndex) => {
             addRow();
             const $row = $('#navlog-table tr').eq(rowIndex + 2); // ヘッダーと出発地行を飛ばす
             Object.keys(rowData).forEach(name => {
@@ -65,6 +71,8 @@ function loadFormFromYAML() {
             });
             calculateNavlog($row[0]);
         });
+
+        updateYAML();
 
     } catch (e) {
         console.error('YAML読み込みエラー', e);

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VFR Navlog</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="print.css" media="print">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
     <script src="columns.js"></script>
@@ -14,6 +15,9 @@
     <script src="yamlUtils.js"></script>
     <script>
         $(document).ready(function() {
+            $('#navlog-title').on('input', function() {
+                updateYAML();
+            });
             createTableHeader(); // ヘッダー行の生成
             addDepartureRow(); // 出発地の行を追加
             createTotalRow(); // 合計行の生成
@@ -35,7 +39,9 @@
     </script>
 </head>
 <body>
-    <h1>VFR ナビゲーションログ</h1>
+    <h1>
+        <input type="text" id="navlog-title" value="VFR ナビゲーションログ" aria-label="ナビゲーションログのタイトル">
+    </h1>
     <form id="navlog-form">
         <table id="navlog-table"></table>
     </form>

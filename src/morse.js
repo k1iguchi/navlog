@@ -1,4 +1,4 @@
-const morseCodeMap = {
+window.morseCodeMap = {
     'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.',
     'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..',
     'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.',
@@ -9,7 +9,7 @@ const morseCodeMap = {
 };
 
 function toMorseCode(text) {
-    return text.toUpperCase().split('').map(char => morseCodeMap[char] || char).join(' ');
+    return text.toUpperCase().split('').map(char => window.morseCodeMap[char] || char).join(' ');
 }
 
 function updateMorseCode(input) {

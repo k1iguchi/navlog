@@ -1,44 +1,3 @@
-function getUnit(type) {
-    switch (type) {
-        case 'speed':
-            return ` kt`;
-        case 'dir':
-        case 'ddir':
-            return ` °`;
-        case 'dist':
-            return ` nm`;
-        case 'time':
-            return ` '`;
-        default:
-            return '';
-    }
-}
-
-function getInputSize(type) {
-    switch (type) {
-        case 'speed':
-            return `6ch`;
-        case 'dir':
-            return `5ch`;
-        case 'ddir':
-            return `4ch`;
-        case 'dist':
-            return `5ch`;
-        case 'time':
-            return `5ch`;
-        case 'freq':
-            return `7ch`;
-        case 'alt':
-            return `7ch`;
-        case 'sign':
-            return `5ch`;
-        case 'rmk':
-            return `15ch`;
-        default:
-            return '10ch';
-    }
-}
-
 function createTableHeader() {
     const $table = $('#navlog-table');
     const $headerRow = $('<tr>', {class: 'header-row'});
@@ -96,19 +55,41 @@ function createTotalRow() {
     $table.append($totalRow);
 }
 
+const defaultTypeDef = { unit: '', inputSize: null };
+
+function getTypeDef(type) {
+    if (typeof typeDefs !== 'object' || typeDefs === null) {
+        return { ...defaultTypeDef };
+    }
+    const typeDef = type ? typeDefs[type] : undefined;
+    return { ...defaultTypeDef, ...(typeDef || {}) };
+}
+
 function addDepartureRow() {
     const $table = $('#navlog-table');
+    const textColumn = columns.find(col => col.name === 'name');
+    const rmkColumn = columns.find(col => col.name === 'rmk');
+    const textTypeDef = getTypeDef(textColumn && textColumn.type);
+    const rmkTypeDef = getTypeDef(rmkColumn && rmkColumn.type);
+    const textWidth = textTypeDef.inputSize;
+    const rmkWidth = rmkTypeDef.inputSize;
     const $row = $('<tr>', {class: 'departure-row'})
     .append($('<td>', {class: 'no-print'}))
     .append($('<td>', {class: 'no-print'}).text('出発地'))
     .append($('<td>', {class: 'name'}).append(
         $('<div>').append(
-            $('<input>', {type: 'text', name: 'departure', style: `width: ${getInputSize('text')}`})
+            $('<input>', Object.assign(
+                { type: 'text', name: 'departure' },
+                textWidth ? { style: `width: ${textWidth}` } : {}
+            ))
         )
     ))
     .append($('<td>', {colspan: columns.length-3}))
     .append($('<td>', {class: 'rmk'}).append(
-        $('<input>', {type: 'text', name: 'rmk', style: `width: ${getInputSize('rmk')}`})
+        $('<textarea>', Object.assign(
+            { type: 'text', name: 'rmk' },
+            rmkWidth ? { style: `width: ${rmkWidth}` } : {}
+        ))
     ))
     $table.append($row);
 }
@@ -128,6 +109,9 @@ function addRow(insertAfterIndex = null) {
 
     columns.forEach(col => {
         const $cell = $('<td>', {class: [col.name, col.type].join(' ')});
+        const typeDef = getTypeDef(col.type);
+        const width = typeDef.inputSize;
+        const unit = typeDef.unit;
         let $input;
 
         if (col.type == 'select') {
@@ -148,12 +132,21 @@ function addRow(insertAfterIndex = null) {
             $cell.addClass('no-print');
         } else if (col.type == 'none') {
             $input = $('<span>');
+        } else if (col.type == 'rmk') {
+            const textareaAttrs = { name: col.name };
+            if (width) {
+                textareaAttrs.style = `width: ${width}`;
+            }
+            $input = $('<textarea>', textareaAttrs);
         } else {
-            $input = $('<input>', {
+            const inputAttrs = {
                 type: ['text', 'sign', 'freq', 'rmk'].includes(col.type) ? 'text' : 'number',
-                name: col.name,
-                style: `width: ${getInputSize(col.type)}`
-            });
+                name: col.name
+            };
+            if (width) {
+                inputAttrs.style = `width: ${width}`;
+            }
+            $input = $('<input>', inputAttrs);
         }
 
         if (this.value !== '' && $table.find('tr').length - 2 === $row.index()) {
@@ -177,14 +170,20 @@ function addRow(insertAfterIndex = null) {
         $cell.append($input);
 
         if (col.name == 'vor') {
-            $sign = $('<input>', {type: 'text', name: 'vorSign', style: `width: ${getInputSize('sign')}`});
+            const signAttrs = { type: 'text', name: 'vorSign' };
+            if (col.extraInputSize) {
+                signAttrs.style = `width: ${col.extraInputSize}`;
+            }
+            $sign = $('<input>', signAttrs);
             $sign.on('input', function() {
                 updateMorseCode(this);
             });
             $cell.append($('<br>'), $sign, $('<div>', {class: 'morse-code'})); // モールス符号を表示するための要素
         }
 
-        $cell.append(getUnit(col.type));
+        if (unit) {
+            $cell.append(unit);
+        }
 
         $row.append($cell);
     });
