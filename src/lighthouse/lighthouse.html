@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>灯台マップ</title>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <link rel="stylesheet" href="lighthouse.css"/>
+</head>
+<body>
+  <h2>灯台の灯色マップ</h2>
+  <div class="map-container">
+    <div id="map"></div>
+    <div id="coordinatePanel" class="coordinate-panel" aria-live="polite">
+      <span id="coordinateText">クリックで緯度・経度を表示</span>
+      <button id="copyCoordsButton" type="button" disabled>コピー</button>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="lighthousesData.js"></script>
+  <script src="../shared/morse.js"></script>
+  <script src="../shared/geoUtils.js"></script>
+  <script src="rangeOverlay.js"></script>
+  <script src="lighthouseSim.js"></script>
+  <script src="lighthouseUI.js"></script>
+</body>
+</html>

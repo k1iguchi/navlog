@@ -1,0 +1,84 @@
+#map { height: 600px; width: 100%; }
+
+.map-container {
+  position: relative;
+}
+
+.coordinate-panel {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: auto;
+}
+
+.coordinate-panel button {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.coordinate-panel button:hover:not([disabled]) {
+  background-color: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.coordinate-panel button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.leaflet-popup-content-wrapper {
+  background-color: #000;
+  color: #fff;
+  border: 1px solid #666;
+}
+
+.leaflet-popup-tip {
+  background-color: #000;
+  border: 1px solid #666;
+}
+
+.popup-light-wrapper {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #000;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.popup-light {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: black;
+  border: 2px solid #333;
+  box-shadow: none;
+  transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.popup-light.on {
+  border-color: currentColor;
+  box-shadow: 0 0 16px 6px currentColor;
+}
+
+.popup-title {
+  text-align: center;
+  margin-bottom: 4px;
+}
